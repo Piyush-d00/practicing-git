@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="topbar">
+      <h1>Weather Dashboard</h1>
+      <form id="search-form" class="search-form" aria-label="Search weather by city">
+        <input id="city-input" type="text" placeholder="Enter city (e.g., London)" required />
+        <button id="search-button" type="submit">Search</button>
+      </form>
+    </header>
+
+    <section class="controls" aria-label="Settings and units">
+      <label class="api-key-control" for="api-key-input">OpenWeather API Key</label>
+      <input id="api-key-input" type="password" placeholder="Paste API key" autocomplete="off" />
+      <button id="save-key-button" type="button">Save Key</button>
+      <div class="unit-toggle" role="group" aria-label="Temperature unit">
+        <button type="button" id="unit-c" class="unit-btn active" data-unit="metric">°C</button>
+        <button type="button" id="unit-f" class="unit-btn" data-unit="imperial">°F</button>
+      </div>
+    </section>
+
+    <p id="status-message" class="status" role="status" aria-live="polite"></p>
+    <p id="error-message" class="error" role="alert" aria-live="assertive"></p>
+
+    <section class="grid">
+      <article id="current-weather" class="card current-weather" aria-label="Current weather">
+        <h2>Current Conditions</h2>
+        <div class="weather-main">
+          <img id="current-icon" alt="Weather icon" />
+          <div>
+            <p id="current-city" class="city">—</p>
+            <p id="current-temp" class="temp">—</p>
+            <p id="current-description">—</p>
+          </div>
+        </div>
+        <div class="metrics">
+          <p>Humidity: <span id="current-humidity">—</span></p>
+          <p>Wind: <span id="current-wind">—</span></p>
+        </div>
+      </article>
+
+      <article class="card forecast" aria-label="5 day forecast">
+        <h2>5-Day Forecast</h2>
+        <div id="forecast-list" class="forecast-list"></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
