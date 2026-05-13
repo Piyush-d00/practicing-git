@@ -63,11 +63,18 @@ function setError(message) {
   statusMessage.textContent = "";
 }
 
+function toSentenceCase(text) {
+  if (!text) {
+    return "N/A";
+  }
+  return text.charAt(0).toLocaleUpperCase() + text.slice(1);
+}
+
 function setCurrentWeather(data) {
   const weather = data.weather?.[0] || {};
-  currentCity.textContent = `${data.name}, ${data.sys?.country || ""}`.replace(/,\s*$/, "");
+  currentCity.textContent = data.sys?.country ? `${data.name}, ${data.sys.country}` : data.name;
   currentTemp.textContent = formatTemp(data.main?.temp ?? 0);
-  currentDescription.textContent = weather.description ? weather.description[0].toUpperCase() + weather.description.slice(1) : "N/A";
+  currentDescription.textContent = toSentenceCase(weather.description);
   currentHumidity.textContent = `${data.main?.humidity ?? "-"}%`;
   currentWind.textContent = formatWind(data.wind?.speed);
   currentIcon.src = weather.icon ? `${ICON_BASE}/${weather.icon}@2x.png` : "";
@@ -121,7 +128,20 @@ function setForecast(data) {
 
 async function fetchJson(url) {
   const response = await fetch(url);
-  const payload = await response.json().catch(() => ({}));
+  const rawPayload = await response.text();
+  let payload = {};
+
+  if (rawPayload) {
+    try {
+      payload = JSON.parse(rawPayload);
+    } catch (error) {
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}.`);
+      }
+      throw new Error("Received malformed weather API response.");
+    }
+  }
+
   if (!response.ok) {
     throw new Error(payload.message || "Unable to fetch weather data.");
   }
