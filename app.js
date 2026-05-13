@@ -1,7 +1,6 @@
 const API_BASE = "https://api.openweathermap.org/data/2.5";
 const ICON_BASE = "https://openweathermap.org/img/wn";
 const LAST_CITY_KEY = "weather_last_city";
-const API_KEY_STORAGE = "weather_api_key";
 const UNIT_STORAGE = "weather_unit";
 
 const searchForm = document.getElementById("search-form");
@@ -23,13 +22,10 @@ const saveKeyButton = document.getElementById("save-key-button");
 const unitButtons = document.querySelectorAll(".unit-btn");
 
 let unit = localStorage.getItem(UNIT_STORAGE) || "metric";
+let apiKey = "";
 
 function getApiKey() {
-  return (localStorage.getItem(API_KEY_STORAGE) || "").trim();
-}
-
-function setApiKey(key) {
-  localStorage.setItem(API_KEY_STORAGE, key.trim());
+  return apiKey.trim();
 }
 
 function setLoading(isLoading) {
@@ -45,6 +41,9 @@ function formatTemp(value) {
 }
 
 function formatWind(value) {
+  if (typeof value !== "number") {
+    return "—";
+  }
   const suffix = unit === "metric" ? "m/s" : "mph";
   return `${value} ${suffix}`;
 }
@@ -70,7 +69,7 @@ function setCurrentWeather(data) {
   currentTemp.textContent = formatTemp(data.main?.temp ?? 0);
   currentDescription.textContent = weather.description ? weather.description[0].toUpperCase() + weather.description.slice(1) : "N/A";
   currentHumidity.textContent = `${data.main?.humidity ?? "-"}%`;
-  currentWind.textContent = formatWind(data.wind?.speed ?? "-");
+  currentWind.textContent = formatWind(data.wind?.speed);
   currentIcon.src = weather.icon ? `${ICON_BASE}/${weather.icon}@2x.png` : "";
   currentIcon.alt = weather.description || "Weather icon";
 }
@@ -154,7 +153,12 @@ async function loadWeather(city) {
     localStorage.setItem(LAST_CITY_KEY, city.trim());
     statusMessage.textContent = `Updated for ${current.name}`;
   } catch (error) {
-    setError(error.message.includes("city not found") ? "City not found. Please check the spelling and try again." : `Failed to load weather: ${error.message}`);
+    const normalized = error.message.toLowerCase();
+    setError(
+      normalized.includes("city not found")
+        ? "City not found. Please check the spelling and try again."
+        : `Failed to load weather: ${error.message}`
+    );
   } finally {
     setLoading(false);
   }
@@ -176,10 +180,14 @@ saveKeyButton.addEventListener("click", () => {
     setError("API key cannot be empty.");
     return;
   }
-  setApiKey(key);
+  apiKey = key;
   apiKeyInput.value = "";
   clearError();
-  statusMessage.textContent = "API key saved locally.";
+  statusMessage.textContent = "API key set for this session.";
+  const lastCity = localStorage.getItem(LAST_CITY_KEY);
+  if (lastCity) {
+    loadWeather(lastCity);
+  }
 });
 
 unitButtons.forEach((button) => {
@@ -196,16 +204,10 @@ unitButtons.forEach((button) => {
 
 (function init() {
   updateUnitButtons();
-  const savedKey = getApiKey();
-  if (savedKey) {
-    apiKeyInput.placeholder = "API key saved";
-  }
-
+  apiKeyInput.placeholder = "Paste API key (session only)";
   const lastCity = localStorage.getItem(LAST_CITY_KEY);
   if (lastCity) {
     cityInput.value = lastCity;
-    loadWeather(lastCity);
-  } else {
-    statusMessage.textContent = "Save your API key and search for a city to get started.";
   }
+  statusMessage.textContent = "Set your API key and search for a city to get started.";
 })();

@@ -8,7 +8,7 @@ A responsive weather dashboard built with HTML, CSS, and vanilla JavaScript usin
 - 5-day forecast with weather icons
 - City search
 - Celsius/Fahrenheit unit toggle
-- Local storage for API key, unit preference, and last searched city
+- Local storage for unit preference and last searched city
 - Loading states and clear error messages
 - Responsive layout for desktop and mobile
 
@@ -31,4 +31,4 @@ A responsive weather dashboard built with HTML, CSS, and vanilla JavaScript usin
 - This project uses OpenWeatherMap endpoints:
   - Current weather: `/data/2.5/weather`
   - Forecast: `/data/2.5/forecast`
-- The API key is stored in browser local storage for convenience.
+- The API key is used in-memory for the active browser session only.
