@@ -21,7 +21,8 @@ const apiKeyInput = document.getElementById("api-key-input");
 const saveKeyButton = document.getElementById("save-key-button");
 const unitButtons = document.querySelectorAll(".unit-btn");
 
-let unit = localStorage.getItem(UNIT_STORAGE) || "metric";
+const savedUnit = localStorage.getItem(UNIT_STORAGE);
+let unit = savedUnit === "imperial" ? "imperial" : "metric";
 let apiKey = "";
 
 function getApiKey() {
@@ -224,7 +225,6 @@ unitButtons.forEach((button) => {
 
 (function init() {
   updateUnitButtons();
-  apiKeyInput.placeholder = "Paste API key (session only)";
   const lastCity = localStorage.getItem(LAST_CITY_KEY);
   if (lastCity) {
     cityInput.value = lastCity;
