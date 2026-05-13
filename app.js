@@ -46,7 +46,7 @@ function formatWind(value) {
     return "—";
   }
   const suffix = unit === "metric" ? "m/s" : "mph";
-  return `${value} ${suffix}`;
+  return `${value.toFixed(1)} ${suffix}`;
 }
 
 function updateUnitButtons() {
@@ -111,8 +111,9 @@ function setForecast(data) {
 
   const byDay = new Map();
   data.list.forEach((item) => {
-    const date = new Date(item.dt * 1000).toISOString().slice(0, 10);
-    const hour = new Date(item.dt * 1000).getHours();
+    const dateTime = new Date(item.dt * 1000);
+    const date = dateTime.toISOString().slice(0, 10);
+    const hour = dateTime.getHours();
     if (!byDay.has(date) && hour >= 11 && hour <= 14) {
       byDay.set(date, item);
     }
