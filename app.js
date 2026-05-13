@@ -67,7 +67,7 @@ function toSentenceCase(text) {
   if (!text) {
     return "N/A";
   }
-  return text.charAt(0).toLocaleUpperCase() + text.slice(1);
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 function setCurrentWeather(data) {
